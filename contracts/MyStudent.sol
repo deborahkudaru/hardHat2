@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.26;
 
-contract Structs {
+contract MyStudent {
     address owner;
 
     constructor() {
