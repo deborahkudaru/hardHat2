@@ -9,8 +9,8 @@ const config: HardhatUserConfig = {
   networks: {
     hardhat: {}, 
     sepolia: {  
-      url: process.env.ALCHEMY_API_URL, 
-      accounts: [process.env.PRIVATE_KEY!],
+      url: process.env.INFURA_API_URL || "", 
+      accounts: [process.env.PRIVATE_KEY as string],
     },
   },
   etherscan: {

@@ -1,8 +1,8 @@
-// SPDX-License-Identifier: MIT
+// // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.26;
 
 contract MyStudent {
-    address owner;
+    address public owner;
 
     constructor() {
         owner = msg.sender;
@@ -13,24 +13,10 @@ contract MyStudent {
         _;
     }
 
-    modifier exists() {
-         _;
-        require(students[studentId].exists, "Student does not exist");
-       
-    }
-
     enum Gender {
         Male,
         Female
     }
-
-    mapping(uint256 => Student) students;
-
-    event CreateStudent(
-        string indexed name,
-        string indexed class,
-        uint8 indexed age
-    );
 
     struct Student {
         string name;
@@ -40,7 +26,15 @@ contract MyStudent {
         bool exists;
     }
 
-    uint256 studentId = 0;
+    mapping(uint256 => Student) private students;
+    uint256 private studentId = 0;
+
+    event CreateStudent(
+        uint256 indexed studentId,
+        string name,
+        string class,
+        uint8 age
+    );
 
     function setStudent(
         string memory _name,
@@ -56,43 +50,45 @@ contract MyStudent {
             exists: true
         });
 
+        emit CreateStudent(studentId, _name, _class, _age);
         studentId++;
-
-        emit CreateStudent(_name, _class, _age);
     }
 
-    function getStudents(uint8 _studentId)
+    function getStudents(uint256 _studentId)
         public
         view
-        returns (Student memory student_)
+        returns (Student memory)
     {
-        return student_ = students[_studentId];
+        require(students[_studentId].exists, "Student does not exist");
+        return students[_studentId];
     }
 
-    function getAllStudents() public view returns (Student[] memory students_) {
-        students_ = new Student[](studentId);
+    function getAllStudents() public view returns (Student[] memory) {
+        Student[] memory studentsList = new Student[](studentId);
 
-        for (uint8 i = 1; i < studentId; i++) {
-            students_[i - 1] = students[i];
+        for (uint256 i = 0; i < studentId; i++) {
+            studentsList[i] = students[i];
         }
-        students_;
+        return studentsList;
     }
 
-    function checkStudent(uint8 _studentId) public view returns (bool) {
+    function checkStudent(uint256 _studentId) public view returns (bool) {
         return students[_studentId].exists;
     }
 
-    function deleteStudent(uint8 _studentId) external onlyOwner {
-        students[_studentId].exists = false;
+    function deleteStudent(uint256 _studentId) external onlyOwner {
+        require(students[_studentId].exists, "Student does not exist");
+        delete students[_studentId];
     }
 
-    function assignUniform(uint8 _studentId)
+    function assignUniform(uint256 _studentId)
         external
         view
         onlyOwner
-        // exists
         returns (string memory)
     {
+        require(students[_studentId].exists, "Student does not exist");
+
         if (students[_studentId].gender == Gender.Male) {
             return "Blue Shirt & Black Pants";
         } else {

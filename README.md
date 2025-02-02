@@ -11,3 +11,7 @@ REPORT_GAS=true npx hardhat test
 npx hardhat node
 npx hardhat ignition deploy ./ignition/modules/Lock.ts
 ```
+
+
+My contract Address
+0xE1dA6bD334505Ab3E0fA0B59E64537210044a3AC
