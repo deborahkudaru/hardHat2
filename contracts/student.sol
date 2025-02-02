@@ -13,15 +13,19 @@ contract Structs {
         _;
     }
 
+    modifier exists() {
+         _;
+        require(students[studentId].exists, "Student does not exist");
+       
+    }
+
     enum Gender {
         Male,
         Female
     }
-    // relative data
-    // mapping (uint => string) names;
+
     mapping(uint256 => Student) students;
 
-    // events
     event CreateStudent(
         string indexed name,
         string indexed class,
@@ -29,10 +33,11 @@ contract Structs {
     );
 
     struct Student {
-        string name; // fields, these are fields,each of these are fields
+        string name;
         uint8 age;
         string class;
         Gender gender;
+        bool exists;
     }
 
     uint256 studentId = 0;
@@ -42,23 +47,25 @@ contract Structs {
         uint8 _age,
         string memory _class,
         Gender _gender
-    ) external {
-        Student memory student = Student({
+    ) external onlyOwner {
+        students[studentId] = Student({
             name: _name,
             age: _age,
             class: _class,
-            gender: _gender
+            gender: _gender,
+            exists: true
         });
 
-        students[studentId] = student;
         studentId++;
 
         emit CreateStudent(_name, _class, _age);
     }
 
-    function getStudents(
-        uint8 _studentId
-    ) public view returns (Student memory student_) {
+    function getStudents(uint8 _studentId)
+        public
+        view
+        returns (Student memory student_)
+    {
         return student_ = students[_studentId];
     }
 
@@ -69,5 +76,27 @@ contract Structs {
             students_[i - 1] = students[i];
         }
         students_;
+    }
+
+    function checkStudent(uint8 _studentId) public view returns (bool) {
+        return students[_studentId].exists;
+    }
+
+    function deleteStudent(uint8 _studentId) external onlyOwner {
+        students[_studentId].exists = false;
+    }
+
+    function assignUniform(uint8 _studentId)
+        external
+        view
+        onlyOwner
+        // exists
+        returns (string memory)
+    {
+        if (students[_studentId].gender == Gender.Male) {
+            return "Blue Shirt & Black Pants";
+        } else {
+            return "White Blouse & Blue Skirt";
+        }
     }
 }
