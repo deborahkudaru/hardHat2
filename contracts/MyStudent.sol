@@ -90,7 +90,7 @@ contract MyStudent {
         require(students[_studentId].exists, "Student does not exist");
 
         if (students[_studentId].gender == Gender.Male) {
-            return "Blue Shirt & Black Pants";
+            return "Blue Shirt & Black Trouser";
         } else {
             return "White Blouse & Blue Skirt";
         }
